@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="20250201084500_create_table_user_profile" author="thinhdq">
+        <sql>
+            CREATE TABLE IF NOT EXISTS public.tbl_user_profile (
+                id bigint UNIQUE NOT NULL,
+                birthday timestamp without time zone,
+                gender smallint,
+                location character varying COLLATE pg_catalog."default",
+                website character varying,
+                occupation character varying COLLATE pg_catalog."default",
+                education character varying COLLATE pg_catalog."default",
+                interests character varying[],
+                created_at timestamp without time zone,
+                created_by character varying COLLATE pg_catalog."default",
+                updated_at timestamp without time zone,
+                updated_by character varying COLLATE pg_catalog."default",
+                status character varying COLLATE pg_catalog."default",
+                CONSTRAINT tbl_user_profile_pkey PRIMARY KEY (id)
+                )
+
+                TABLESPACE pg_default;
+
+            ALTER TABLE IF EXISTS public.tbl_user_profile OWNER to postgres;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

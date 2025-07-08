@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="20250201085000_create_table_role" author="thinhdq">
+        <sql>
+            CREATE TABLE IF NOT EXISTS public.tbl_role (
+                id bigint NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 START 1
+                MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1),
+                name character varying COLLATE pg_catalog."default" UNIQUE NOT NULL,
+                created_at timestamp without time zone,
+                created_by character varying COLLATE pg_catalog."default",
+                updated_at timestamp without time zone,
+                updated_by character varying COLLATE pg_catalog."default",
+                status character varying COLLATE pg_catalog."default" NOT NULL,
+                CONSTRAINT tbl_role_pkey PRIMARY KEY (id)
+                )
+
+                TABLESPACE pg_default;
+
+            ALTER TABLE IF EXISTS public.tbl_role OWNER to postgres;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

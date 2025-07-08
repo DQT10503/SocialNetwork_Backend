@@ -1,0 +1,53 @@
+server:
+  servlet:
+    context-path: /api/user-service
+  port: 6789
+
+keycloak:
+  realm: SocialNetworkRealm
+  auth-server-url: http://localhost:8080/
+  resource: social-network
+  use-resource-role-mappings: true
+  bearer-only: true
+  public-client: true
+keycloak-properties:
+  client-id: eb0185a8-3ab4-4d86-ac4b-b9ab7cdd652e
+  client-secret: 6Xlo4Zzomf9laSsYzOVFktCEJ7C5aTDx
+  grant-type: password
+  username-admin: superadmin
+  password-admin: 12345
+
+spring:
+  main:
+    allow-bean-definition-overriding: true #cho phép việc ghi đè (overriding) các bean trong ứng dụng
+  application:
+    name: user-service
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: public
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_fb_clone_service_user
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: user-service
+      connection-timeout: 30000 #thời gian tối đa (tính = millisecond) mà client đợi để kết nối
+      minimum-idle: 2 #số kết nối tối thiểu mà pool luôn giữ trong trạng thái rảnh (idle)
+      maximum-pool-size: 20 #số lượng tối đa mà pool có thể quản lý
+      idle-timeout: 10000 #thời gian tối đa mà connection idle(không sử dụng) sẽ được giữ trước khi bị loại bỏ
+      max-lifetime: 30000 #thời gian tối đa mà một connection được phép tồn tại trước khi bị loại bỏ, bất kể có đang được sử dụng hay không
+      auto-commit: true #các thay đổi trong giao dịch sẽ đuợc tự động commit sau mỗi câu lệnh
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
