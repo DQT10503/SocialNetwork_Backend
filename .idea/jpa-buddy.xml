@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpaBuddyIdeaProjectConfig" newRepositoryParent="org.springframework.data.jpa.repository.JpaRepository">
+    <option name="defaultUnitInitialized" value="true" />
+    <option name="renamerInitialized" value="true" />
+    <option name="snapshotDbValue" value="e34599f8-3dd4-449a-b082-f0844110f8da" />
+    <option name="reverseEngineeringLastDbConnectionId" value="fd8f9021-e34c-43bf-a7d7-fa99644f168e__db_fb_clone_service_notification_public" />
+    <option name="reLastEntityCreationPackage" value="source-notification-service/src/main/java/com/source_notification/entity" />
+  </component>
+</project>
