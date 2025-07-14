@@ -21,6 +21,10 @@ public class TblFriendRequestId implements Serializable {
         this.receiverId = receiverId;
     }
 
+    public TblFriendRequestId() {
+
+    }
+
     public Long getSenderId() {
         return senderId;
     }

@@ -16,9 +16,15 @@ public class TblFollowerId implements Serializable {
     @Column(name = "followed_id", nullable = false)
     private Long followedId;
 
+
+
     public TblFollowerId(Long followerId, Long followedId) {
         this.followerId = followerId;
         this.followedId = followedId;
+    }
+
+    public TblFollowerId() {
+
     }
 
     public Long getFollowerId() {

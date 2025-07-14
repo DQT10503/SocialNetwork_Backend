@@ -21,6 +21,10 @@ public class TblBlockId implements Serializable {
         this.blockedId = blockedId;
     }
 
+    public TblBlockId() {
+
+    }
+
     public Long getBlockerId() {
         return blockerId;
     }

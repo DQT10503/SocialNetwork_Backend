@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Tuple;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +29,15 @@ import java.util.Map;
 @Transactional
 public class TblFollowerServiceImpl implements TblFollowerService {
 
-    private TblFollowerRepository followerRepository;
-    private CommonService commonService;
-    private MessageUtil messageUtil;
+    private final TblFollowerRepository followerRepository;
+    private final CommonService commonService;
+    private final MessageUtil messageUtil;
+
+    public TblFollowerServiceImpl(TblFollowerRepository followerRepository, CommonService commonService, MessageUtil messageUtil) {
+        this.followerRepository = followerRepository;
+        this.commonService = commonService;
+        this.messageUtil = messageUtil;
+    }
 
     @Override
     public PagingResponse search(TblFollowerRequest request, Pageable pageRequest) {
