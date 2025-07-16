@@ -54,3 +54,6 @@ spring:
         max-idle: 5 #tối đa kết nối rảnh được giữ lại trong pool
         min-idle: 1 #Số lượng kết nối rảnh tối thiểu
         max-wait: 1000ms #thời gian chờ tối đa khi không có kết nối sẵn
+  schedule:
+    job:
+      friend-cache: 0 0 3 * * *
