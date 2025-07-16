@@ -1,10 +1,6 @@
 package com.source_content.service.impl;
 
-import com.api.framework.domain.PagingResponse;
 import com.api.framework.utils.Constants;
-import com.api.framework.utils.Utilities;
-import com.source_content.domain.follower.FollowerResponse;
-import com.source_content.domain.user.UserResponse;
 import com.source_content.entity.TblPost;
 import com.source_content.repository.TblPostRepository;
 import com.source_content.service.EdgeRankScoringService;
@@ -12,16 +8,16 @@ import com.source_content.service.retrofit.RelationshipApiService;
 import com.source_content.service.retrofit.UserApiService;
 import com.source_content.utils.enummerate.ContentStatus;
 import com.source_content.utils.enummerate.PrivacyLevel;
-import com.source_user_auth.domain.keycloak.TokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import retrofit2.Call;
-import retrofit2.Response;
 
-import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 
 @Transactional
@@ -44,11 +40,13 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
     private final TblPostRepository postRepository;
     private final RelationshipApiService relationshipApiService;
     private final UserApiService userApiService;
+    private final StringRedisTemplate stringRedisTemplate;
 
-    public EdgeRankScoringServiceImpl(TblPostRepository postRepository, RelationshipApiService relationshipApiService, UserApiService userApiService) {
+    public EdgeRankScoringServiceImpl(TblPostRepository postRepository, RelationshipApiService relationshipApiService, UserApiService userApiService, StringRedisTemplate stringRedisTemplate) {
         this.postRepository = postRepository;
         this.relationshipApiService = relationshipApiService;
         this.userApiService = userApiService;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
 
@@ -58,8 +56,8 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
         return 0;
     }
 
-    private void a() {
-        Map<Long, Set<Long>> friendMap =
+    private void calAffinity() {
+        Map<Long, Set<Object>> mapFriendsWithUser = getFriendsByUserIds();
         Map<Long, Set<Long>> mapUserIdWithPostId = new HashMap<>();
         int page = 0;
         Page<TblPost> postPage;
@@ -71,36 +69,20 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
 
     }
 
-    private void mapFriend(String token, List<Long> followerIds) throws IOException {
-        Map<Long, Set<Long>> friendMap = new HashMap<>();
-        for (Long followerId : followerIds) {
-            int page = 0;
-            Set<Long> friendIds = new HashSet<>();
-            while (true) {
-                Call<PagingResponse> call = relationshipApiService.getFollower(token, followerId, page);
-                Response<PagingResponse> response = call.execute();
-                List<PagingResponse> pagingResponse = (List<PagingResponse>) response.body().getData();
-                List<FollowerResponse> lsFollower = Utilities.copyProperties(pagingResponse, FollowerResponse.class);
-                if (response.body().getData().isEmpty()) {
-                    break;
-                }
-                if (Objects.isNull(lsFollower) || lsFollower.isEmpty()) {
-                    break;
-                }
-                page++;
-            }
-            friendMap.put(followerId, friendIds);
-        }
+    private Map<Long, Set<Object>> getFriendsByUserIds() {
+        Map<Long, Set<Object>> result = new HashMap<>();
+        Cursor<byte[]> cursor = Objects.requireNonNull(stringRedisTemplate.getConnectionFactory())
+                .getConnection()
+                .scan(ScanOptions.scanOptions().match("user:following:*").count(1000).build());
 
+        while (cursor.hasNext()) {
+            String key = new String(cursor.next());
+            Set<Object> friends = Collections.singleton(stringRedisTemplate.opsForSet().members(key));
+            Long userId = (new BigInteger(key.replace("user:following:", ""))).longValue();
+            result.put(userId, friends);
+        }
+        return result;
     }
 
-    private String getTokenAdmin() throws IOException {
-        Call<TokenResponse> call = userApiService.getToken(realm, resource, grantType, clientSecret, usernameAdmin, passwordAdmin);
-        Response<TokenResponse> response = call.execute();
-        if (!response.isSuccessful() && Objects.nonNull(response.errorBody())) {
-            throw new RuntimeException("Failed to get token: " + response.errorBody().string());
-        }
-        return response.body().getAccessToken();
-    }
 }
 

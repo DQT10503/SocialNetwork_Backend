@@ -51,6 +51,14 @@ spring:
   redis:
     host: localhost
     port: 6379
+    password: ${REDIS_PASSWORD}
+    timeout: 6000 #thời gian chờ kết nối Redis (miliseconds)
+    lettuce:
+      pool: #cấu hình connection pool khi dùng Redis client Lettuce
+        max-active: 10 #số lượng kết nối tối đa có thể hoạt động đồng thời
+        max-idle: 5 #tối đa kết nối rảnh được giữ lại trong pool
+        min-idle: 1 #Số lượng kết nối rảnh tối thiểu
+        max-wait: 1000ms #thời gian chờ tối đa khi không có kết nối sẵn
 cloudinary:
   cloud-name: dtixovdax
   api-key: 552782965913599
