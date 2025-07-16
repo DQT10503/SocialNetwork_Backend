@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <include file="/db/changelog/changes/tables/20250420110000_create_table_follower.xml" />
+    <include file="/db/changelog/changes/tables/20250420110500_create_table_block.xml" />
+    <include file="/db/changelog/changes/tables/20250420111000_create_table_friend_request.xml" />
+
+</databaseChangeLog>
