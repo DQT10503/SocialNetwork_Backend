@@ -27,15 +27,6 @@ public class FollowerCacheServiceImpl implements FollowerCacheService {
 
     @Override
     public void cacheUserWithFollowed() throws JsonProcessingException {
-        List<UserWithFollowedResponse> followedResponses = getFollowed();
-        for (UserWithFollowedResponse response : followedResponses) {
-            String key = "user:following:" + response.getUserId();
-            String value = objectMapper.writeValueAsString(response.getFollowed());
-            stringRedisTemplate.opsForValue().set(key, value);
-        }
-    }
-
-    private List<UserWithFollowedResponse> getFollowed() {
         String sql = ""
                 + "     SELECT follower_id AS user_id, followed_id AS followed_user_id"
                 + "     FROM tbl_follower"
@@ -47,20 +38,10 @@ public class FollowerCacheServiceImpl implements FollowerCacheService {
         Map<String, Object> params = new HashMap<>();
         params.put("status", RelationshipStatus.ACTIVE.toString());
         List<Tuple> tuples = commonService.executeGetListTuple(sql, params);
-
-        List<UserWithFollowedResponse> userWithFollowedResponses = new ArrayList<>();
-        Map<Long, Set<Long>> userFollowMap = new HashMap<>();
         for (Tuple tuple : tuples) {
             Long userId =  ((BigInteger) tuple.get("user_id")).longValue();
             Long followedId = ((BigInteger) tuple.get("followed_user_id")).longValue();
-            userFollowMap.computeIfAbsent(userId, k -> new HashSet<>()).add(followedId);
+            stringRedisTemplate.opsForSet().add("user:following:" + userId, followedId.toString());
         }
-        for (Map.Entry<Long, Set<Long>> entry : userFollowMap.entrySet()) {
-            UserWithFollowedResponse response = new UserWithFollowedResponse();
-            response.setUserId(entry.getKey());
-            response.setFollowed(entry.getValue());
-            userWithFollowedResponses.add(response);
-        }
-        return userWithFollowedResponses;
     }
 }

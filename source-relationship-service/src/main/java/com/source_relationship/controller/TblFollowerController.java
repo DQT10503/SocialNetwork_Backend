@@ -4,6 +4,8 @@ import com.api.framework.domain.DeleteMethodResponse;
 import com.api.framework.domain.PagingRequest;
 import com.api.framework.domain.PagingResponse;
 import com.api.framework.security.BearerContextHolder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.source_relationship.cache.FollowerCacheService;
 import com.source_relationship.domain.follower.TblFollowerCreateRequest;
 import com.source_relationship.domain.follower.TblFollowerRequest;
 import com.source_relationship.domain.follower.TblFollowerResponse;
@@ -34,7 +36,7 @@ public class TblFollowerController {
 
     @ApiOperation(value = "Filter follower")
     @GetMapping
-    public ResponseEntity<PagingResponse> search(TblFollowerRequest request, PagingRequest pagingRequest) {
+    public ResponseEntity<PagingResponse> search(TblFollowerRequest request, PagingRequest pagingRequest) throws JsonProcessingException {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount, request);
         Pageable pageable = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), pagingRequest.getSort(Sort.by(Sort.Direction.ASC, "created_at")));
@@ -59,8 +61,8 @@ public class TblFollowerController {
 
     @ApiOperation(value = "Xóa follower")
     @DeleteMapping("/{followerId}/{followedId}")
-    public ResponseEntity<DeleteMethodResponse> delete(@PathVariable("followerId") Long followerId,
-                                                       @PathVariable("followedId") Long followedId) {
+    public ResponseEntity<DeleteMethodResponse> delete(@PathVariable Long followerId,
+                                                       @PathVariable Long followedId) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Delete {}", masterAccount, followerId);
         return ResponseEntity.ok(followerService.delete(followerId, followedId));

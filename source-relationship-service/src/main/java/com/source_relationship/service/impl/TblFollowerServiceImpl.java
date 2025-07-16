@@ -4,10 +4,7 @@ import com.api.framework.domain.DeleteMethodResponse;
 import com.api.framework.domain.PagingResponse;
 import com.api.framework.exception.BusinessException;
 import com.api.framework.service.CommonService;
-import com.api.framework.utils.Constants;
-import com.api.framework.utils.MessageUtil;
-import com.api.framework.utils.SimpleQueryBuilder;
-import com.api.framework.utils.Utilities;
+import com.api.framework.utils.*;
 import com.source_relationship.domain.follower.TblFollowerCreateRequest;
 import com.source_relationship.domain.follower.TblFollowerRequest;
 import com.source_relationship.domain.follower.TblFollowerResponse;
@@ -18,6 +15,7 @@ import com.source_relationship.repository.TblFollowerRepository;
 import com.source_relationship.service.TblFollowerService;
 import com.source_relationship.utils.enumerate.RelationshipStatus;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +30,13 @@ public class TblFollowerServiceImpl implements TblFollowerService {
     private final TblFollowerRepository followerRepository;
     private final CommonService commonService;
     private final MessageUtil messageUtil;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public TblFollowerServiceImpl(TblFollowerRepository followerRepository, CommonService commonService, MessageUtil messageUtil) {
+    public TblFollowerServiceImpl(TblFollowerRepository followerRepository, CommonService commonService, MessageUtil messageUtil, RedisTemplate<String, String> redisTemplate) {
         this.followerRepository = followerRepository;
         this.commonService = commonService;
         this.messageUtil = messageUtil;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -58,9 +58,12 @@ public class TblFollowerServiceImpl implements TblFollowerService {
 
     @Override
     public TblFollowerResponse insert(TblFollowerCreateRequest request) {
-        TblFollower follower = Utilities.copyProperties(request, TblFollower.class);
+        TblFollowerId followerId = new TblFollowerId(request.getFollowerId(), request.getFollowedId());
+        TblFollower follower = new TblFollower();
+        follower.setId(followerId);
         follower.setStatus(RelationshipStatus.ACTIVE);
         followerRepository.save(follower);
+        redisTemplate.opsForSet().add("user:following:" + request.getFollowerId(), request.getFollowedId().toString());
         return Utilities.copyProperties(follower, TblFollowerResponse.class);
     }
 
@@ -73,10 +76,11 @@ public class TblFollowerServiceImpl implements TblFollowerService {
 
     @Override
     public DeleteMethodResponse delete(Long followerId, Long followedId) {
-        TblFollower follower = getFollowerById(followedId, followedId);
+        TblFollower follower = getFollowerById(followerId, followedId);
         followerRepository.delete(follower);
         DeleteMethodResponse response = new DeleteMethodResponse();
         response.setId(followerId);
+        redisTemplate.opsForSet().remove("user:following:" + followerId, followedId.toString());
         return response;
     }
 

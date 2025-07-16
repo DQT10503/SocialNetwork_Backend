@@ -1,26 +1,18 @@
 package com.source_relationship.domain.follower;
 
+import com.source_relationship.entity.embedded.TblFollowerId;
 import com.source_relationship.utils.enumerate.RelationshipStatus;
 
 public class TblFollowerResponse {
-    private Long followerId;
-    private Long followedId;
+    private TblFollowerId id;
     private RelationshipStatus status;
 
-    public Long getFollowerId() {
-        return followerId;
+    public TblFollowerId getId() {
+        return id;
     }
 
-    public void setFollowerId(Long followerId) {
-        this.followerId = followerId;
-    }
-
-    public Long getFollowedId() {
-        return followedId;
-    }
-
-    public void setFollowedId(Long followedId) {
-        this.followedId = followedId;
+    public void setId(TblFollowerId id) {
+        this.id = id;
     }
 
     public RelationshipStatus getStatus() {
@@ -33,6 +25,6 @@ public class TblFollowerResponse {
 
     @Override
     public String toString() {
-        return "TblFollowerResponse [followerId=" + followerId + ", followedId=" + followedId + ", status=" + status + "]";
+        return "TblFollowerResponse [id=" + id + ", status=" + status + "]";
     }
 }
