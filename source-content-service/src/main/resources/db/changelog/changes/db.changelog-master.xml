@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <include file="/db/changelog/changes/tables/20250201090500_create_table_post.xml"/>
+    <include file="/db/changelog/changes/tables/20250201091000_create_table_post_draft.xml"/>
+    <include file="/db/changelog/changes/tables/20250201091500_create_table_media.xml"/>
+    <include file="/db/changelog/changes/tables/20250201092000_create_table_album.xml"/>
+    <include file="/db/changelog/changes/tables/20250201092500_create_table_album_media.xml"/>
+    <include file="/db/changelog/changes/tables/20250201093000_create_table_hashtag.xml"/>
+    <include file="/db/changelog/changes/tables/20250201093500_create_table_post_mention.xml"/>
+    <include file="/db/changelog/changes/tables/20250201094000_update_table_post.xml"/>
+
+</databaseChangeLog>

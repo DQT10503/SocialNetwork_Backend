@@ -1,0 +1,34 @@
+services:
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: kafka
+    ports:
+      - "9092:9092"                                             # Cổng bên ngoài: cho ứng dụng khác kết nối tới broker
+      - "9093:9093"                                             # Cổng điều khiển: dùng cho controller trong KRaft mode
+    environment:
+      KAFKA_NODE_ID: 1                                          # ID của node Kafka (mỗi node trong cluster cần ID riêng)
+      KAFKA_PROCESS_ROLES: broker,controller                    # Vai trò: chạy cả broker (xử lý dữ liệu) và controller (quản lý cluster)
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER               # Tên listener dành cho controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093  # Danh sách listener: PLAINTEXT cho broker, CONTROLLER cho controller
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,CONTROLLER://kafka:9093  # Địa chỉ: cho client và controller biết cách kết nối
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT  # Ánh xạ giao thức: cả hai listener đều dùng PLAINTEXT (không mã hóa)
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT               # Tên listener dùng để broker giao tiếp với nhau
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093              # Quorum voter: định nghĩa node nào làm controller (ID 1 tại kafka:9093)
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs                  # Thư mục lưu log và dữ liệu Kafka
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"                   # Tự động tạo topic nếu chưa tồn tại
+      KAFKA_CLUSTER_ID: "7s3UoBz_TSOuquRHEPbf1Q"                # ID của cluster Kafka (cần là UUID nếu Kafka yêu cầu)
+      KAFKA_KRAFT_MODE: "true"
+    volumes:
+      - ./data/kafka:/tmp/kraft-combined-logs                   # Lưu dữ liệu từ container ra thư mục ./data/kafka trên host
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest                        # Image giao diện quản lý Kafka
+    container_name: kafka-ui                                    # Tên container giao diện
+    ports:
+      - "9000:8080"                                             # Cổng truy cập giao diện: http://localhost:9000
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka-4.0                          # Tên cluster hiển thị trên giao diện
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: host.docker.internal:9092         # Địa chỉ broker để giao diện kết nối
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on:
+      - kafka                                                   # Phụ thuộc vào dịch vụ kafka
