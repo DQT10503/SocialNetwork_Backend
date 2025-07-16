@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="20250108150500_create_table_conversation_member" author="thinhdq">
+        <sql>
+            CREATE TABLE IF NOT EXISTS service_message.tbl_conversation_member (
+                conversation_id bigint NOT NULL,
+                user_id bigint NOT NULL,
+                last_read_at timestamp without time zone,
+                created_at timestamp without time zone,
+                created_by character varying COLLATE pg_catalog."default",
+                updated_at timestamp without time zone,
+                updated_by character varying COLLATE pg_catalog."default",
+                status character varying COLLATE pg_catalog."default" NOT NULL,
+                CONSTRAINT tbl_conversation_member_pkey PRIMARY KEY (conversation_id, user_id)
+                )
+
+                TABLESPACE pg_default;
+
+            ALTER TABLE IF EXISTS service_message.tbl_conversation_member OWNER to postgres;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

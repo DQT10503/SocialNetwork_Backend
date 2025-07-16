@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="20250108150000_create_table_message" author="thinhdq">
+        <sql>
+            CREATE TABLE IF NOT EXISTS service_message.tbl_message (
+                id bigint NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 START 1
+                MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1),
+                conversation_id bigint NOT NULL,
+                sender_id bigint NOT NULL,
+                content character varying,
+                type character varying,
+                created_at timestamp without time zone,
+                created_by character varying COLLATE pg_catalog."default",
+                updated_at timestamp without time zone,
+                updated_by character varying COLLATE pg_catalog."default",
+                status character varying COLLATE pg_catalog."default" NOT NULL,
+                CONSTRAINT tbl_message_pkey PRIMARY KEY (id)
+                )
+
+                TABLESPACE pg_default;
+
+            ALTER TABLE IF EXISTS service_message.tbl_message OWNER to postgres;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
