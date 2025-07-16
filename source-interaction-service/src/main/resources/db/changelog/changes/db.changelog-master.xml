@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <include file="/db/changelog/changes/tables/20250201094000_create_table_like.xml"/>
+    <include file="/db/changelog/changes/tables/20250201094500_create_table_comment.xml"/>
+    <include file="/db/changelog/changes/tables/20250201095000_create_table_comment_like.xml"/>
+    <include file="/db/changelog/changes/tables/20250201095500_create_table_share.xml"/>
+    <include file="/db/changelog/changes/tables/20250201100000_create_table_saved_post.xml"/>
+
+</databaseChangeLog>
