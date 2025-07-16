@@ -1,0 +1,61 @@
+server:
+  servlet:
+    context-path: /api/notification-service
+  port: 8386
+
+keycloak:
+  realm: SocialNetworkRealm
+  auth-server-url: http://localhost:8080/
+  ssl-required: external
+  resource: social-network
+  use-resource-role-mappings: true
+  bearer-only: true
+  public-client: true
+
+spring:
+  main:
+    allow-bean-definition-overriding: true #cho phép việc ghi đè (overriding) các bean trong ứng dụng
+  application:
+    name: notification-service
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/changes/db.changelog-master.xml
+    default-schema: public
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_fb_clone_service_notification
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: notification-service
+      connection-timeout: 30000 #thời gian tối đa (tính = millisecond) mà client đợi để kết nối
+      minimum-idle: 2 #số kết nối tối thiểu mà pool luôn giữ trong trạng thái rảnh (idle)
+      maximum-pool-size: 20 #số lượng tối đa mà pool có thể quản lý
+      idle-timeout: 10000 #thời gian tối đa mà connection idle(không sử dụng) sẽ được giữ trước khi bị loại bỏ
+      max-lifetime: 30000 #thời gian tối đa mà một connection được phép tồn tại trước khi bị loại bỏ, bất kể có đang được sử dụng hay không
+      auto-commit: true #các thay đổi trong giao dịch sẽ đuợc tự động commit sau mỗi câu lệnh
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  servlet:
+    multipart:
+      max-file-size: 3MB
+      max-request-size: 3MB
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+    listener:
+      type: batch
+      ack-mode: manual_immediate
+service-post:
+  base-url: http://localhost:6787/api/post-service/
+service-user:
+  base-url: http://localhost:6789/api/user-service/
