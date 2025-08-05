@@ -1,29 +1,21 @@
-package com.source_interaction.entity;
+package com.source_interaction.domain.share;
 
 import com.source_interaction.utils.enummerate.InteractionStatus;
 
-import javax.persistence.*;
-import java.io.Serializable;
-
-@Entity
-@Table(name = "tbl_share")
-public class TblShare extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Column(name = "user_id")
+public class TblShareResponse {
+    private Long id;
     private Long userId;
-
-    @Column(name = "post_id")
     private Long postId;
-
-    @Column(name = "share_text")
-    private String shareText;
-
-    @Column(name = "author_id")
     private Long authorId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     private InteractionStatus status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getUserId() {
         return userId;
@@ -39,14 +31,6 @@ public class TblShare extends BaseEntity implements Serializable {
 
     public void setPostId(Long postId) {
         this.postId = postId;
-    }
-
-    public String getShareText() {
-        return shareText;
-    }
-
-    public void setShareText(String shareText) {
-        this.shareText = shareText;
     }
 
     public Long getAuthorId() {
@@ -67,6 +51,6 @@ public class TblShare extends BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "TblShare [userId=" + userId + ", postId=" + postId + ", shareText=" + shareText + ", authorId=" + authorId + ", status=" + status + "]";
+        return "TblShareResponse [id=" + id + ", userId=" + userId + ", postId=" + postId + ", authorId=" + authorId + ", status=" + status + "]";
     }
 }

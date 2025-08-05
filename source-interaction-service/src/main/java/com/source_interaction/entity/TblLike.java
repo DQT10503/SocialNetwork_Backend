@@ -16,6 +16,9 @@ public class TblLike implements Serializable {
     @EmbeddedId
     private TblLikeId id;
 
+    @Column(name = "author_id")
+    private Long authorId;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -38,6 +41,14 @@ public class TblLike implements Serializable {
 
     public void setId(TblLikeId id) {
         this.id = id;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 
     public Instant getCreatedAt() {
@@ -82,7 +93,7 @@ public class TblLike implements Serializable {
 
     @Override
     public String toString() {
-        return "TblLike [id=" + id + ", createdAt=" + createdAt + ", createdBy=" + createdBy + ", updatedAt=" + updatedAt + ", updatedBy=" + updatedBy + ", status=" + status + "]";
+        return "TblLike [id=" + id + ", authorId=" + authorId + ", createdAt=" + createdAt + ", createdBy=" + createdBy + ", updatedAt=" + updatedAt + ", updatedBy=" + updatedBy + ", status=" + status + "]";
     }
 
     @PrePersist

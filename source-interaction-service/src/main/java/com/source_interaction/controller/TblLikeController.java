@@ -33,7 +33,7 @@ public class TblLikeController {
 
     @ApiOperation(value = "Danh sách like")
     @GetMapping
-    public ResponseEntity<PagingResponse> search(@RequestBody TblLikeRequest request, PagingRequest pagingRequest) {
+    public ResponseEntity<PagingResponse> search(TblLikeRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount,  request);
         Pageable pageRequest = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), Sort.by(Sort.Direction.ASC, "created_at"));

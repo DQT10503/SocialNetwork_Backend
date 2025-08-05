@@ -19,6 +19,8 @@ public class TblCommentRequest {
     private String content;
     @ApiModelProperty(value = "Bình luận cha")
     private Long parentId;
+    @ApiModelProperty(value = "ID tác giả post")
+    private Long authorId;
     @ApiModelProperty(value = "Ngày tạo")
     private Instant createdAt;
     @ApiModelProperty(value = "Trạng thái")
@@ -64,6 +66,14 @@ public class TblCommentRequest {
         this.parentId = parentId;
     }
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -82,6 +92,6 @@ public class TblCommentRequest {
 
     @Override
     public String toString() {
-        return "TblCommentRequest [id=" + id + ", userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", createdAt=" + createdAt + ", status=" + status + "]";
+        return "TblCommentRequest [id=" + id + ", userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", authorId=" + authorId + ", createdAt=" + createdAt + ", status=" + status + "]";
     }
 }

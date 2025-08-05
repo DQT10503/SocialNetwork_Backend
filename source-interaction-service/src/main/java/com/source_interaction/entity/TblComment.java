@@ -21,6 +21,9 @@ public class TblComment extends BaseEntity implements Serializable {
     @Column(name = "parent_id")
     private Long parentId;
 
+    @Column(name = "author_id")
+    private Long authorId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private InteractionStatus status;
@@ -57,6 +60,14 @@ public class TblComment extends BaseEntity implements Serializable {
         this.parentId = parentId;
     }
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
     public InteractionStatus getStatus() {
         return status;
     }
@@ -67,6 +78,6 @@ public class TblComment extends BaseEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "TblComment [userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", status=" + status + "]";
+        return "TblComment [userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", authorId=" + authorId + ", status=" + status + "]";
     }
 }

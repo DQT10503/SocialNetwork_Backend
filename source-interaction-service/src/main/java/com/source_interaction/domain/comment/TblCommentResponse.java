@@ -7,6 +7,7 @@ public class TblCommentResponse {
     private Long postId;
     private String content;
     private Long parentId;
+    private Long authorId;
     private InteractionStatus status;
 
     public Long getUserId() {
@@ -41,6 +42,14 @@ public class TblCommentResponse {
         this.parentId = parentId;
     }
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
     public InteractionStatus getStatus() {
         return status;
     }
@@ -51,6 +60,6 @@ public class TblCommentResponse {
 
     @Override
     public String toString() {
-        return "TblCommentResponse [userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", status=" + status + "]";
+        return "TblCommentResponse [userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", authorId=" + authorId + ", status=" + status + "]";
     }
 }

@@ -15,6 +15,8 @@ public class TblCommentCreateRequest {
     @ApiModelProperty(value = "Comment cha")
     private Long parentId;
 
+    private Long authorId;
+
     public String getContent() {
         return content;
     }
@@ -31,8 +33,16 @@ public class TblCommentCreateRequest {
         this.parentId = parentId;
     }
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
     @Override
     public String toString() {
-        return "TblCommentCreateRequest [content=" + content + ", parentId=" + parentId + "]";
+        return "TblCommentCreateRequest [content=" + content + ", parentId=" + parentId + ", authorId=" + authorId + "]";
     }
 }

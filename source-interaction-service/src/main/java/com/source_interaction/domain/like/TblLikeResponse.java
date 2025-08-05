@@ -5,6 +5,7 @@ import com.source_interaction.utils.enummerate.ReactionType;
 
 public class TblLikeResponse {
     private TblLikeId id;
+    private Long authorId;
     private ReactionType status;
 
     public TblLikeId getId() {
@@ -13,6 +14,14 @@ public class TblLikeResponse {
 
     public void setId(TblLikeId id) {
         this.id = id;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 
     public ReactionType getStatus() {
@@ -25,6 +34,6 @@ public class TblLikeResponse {
 
     @Override
     public String toString() {
-        return "TblLikeResponse [id=" + id + ", status=" + status + "]";
+        return "TblLikeResponse [id=" + id + ", authorId=" + authorId + ", status=" + status + "]";
     }
 }

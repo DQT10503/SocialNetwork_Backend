@@ -35,7 +35,7 @@ public class TblCommentLikeController {
 
     @ApiOperation(value = "Danh sách react comment")
     @GetMapping
-    public ResponseEntity<PagingResponse> search(@RequestBody TblCommentLikeRequest request, PagingRequest pagingRequest) {
+    public ResponseEntity<PagingResponse> search(TblCommentLikeRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount, request);
         Pageable pageRequest = PageRequest.of(pagingRequest.getLimit(), pagingRequest.getOffset(), Sort.by(Sort.Direction.ASC, "user_id"));
@@ -61,7 +61,7 @@ public class TblCommentLikeController {
     @ApiOperation(value = "Xóa react comment")
     @DeleteMapping("/userId/{userId}/commentId/{commentId}")
     public ResponseEntity<Void> delete(@PathVariable Long userId,
-                                                       @PathVariable Long commentId) {
+                                       @PathVariable Long commentId) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Delete {} {}", masterAccount, userId, commentId);
         return ResponseEntity.noContent().build();
