@@ -19,6 +19,14 @@ public class TblSavedPostId implements Serializable {
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
+    public TblSavedPostId() {
+    }
+
+    public TblSavedPostId(Long userId, Long postId) {
+        this.userId = userId;
+        this.postId = postId;
+    }
+
     public Long getUserId() {
         return userId;
     }

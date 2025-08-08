@@ -8,11 +8,13 @@ import com.api.framework.utils.MessageUtil;
 import com.api.framework.utils.Utilities;
 import com.source_interaction.domain.post.PostResponse;
 import com.source_interaction.domain.user.UserResponse;
+import org.springframework.stereotype.Service;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.util.List;
 
+@Service
 public class CallApiExternalService {
     private final PostApiService postApiService;
     private final UserApiService userApiService;
