@@ -11,6 +11,7 @@ import com.source_interaction.domain.user.UserResponse;
 import com.source_interaction.entity.TblComment;
 import com.source_interaction.repository.TblCommentRepository;
 import com.source_interaction.service.TblCommentService;
+import com.source_interaction.service.retrofit.CallApiExternalService;
 import com.source_interaction.utils.enummerate.InteractionStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,13 +29,13 @@ public class TblCommentServiceImpl implements TblCommentService {
     private final CommonService commonService;
     private final MessageUtil messageUtil;
     private final TblCommentRepository commentRepository;
-    private final TblLikeServiceImpl likeServiceImpl;
+    private final CallApiExternalService callApiExternalService;
 
-    public TblCommentServiceImpl(CommonService commonService, MessageUtil messageUtil, TblCommentRepository commentRepository, TblLikeServiceImpl likeServiceImpl) {
+    public TblCommentServiceImpl(CommonService commonService, MessageUtil messageUtil, TblCommentRepository commentRepository, CallApiExternalService callApiExternalService) {
         this.commonService = commonService;
         this.messageUtil = messageUtil;
         this.commentRepository = commentRepository;
-        this.likeServiceImpl = likeServiceImpl;
+        this.callApiExternalService = callApiExternalService;
     }
 
     @SuppressWarnings("unchecked")
@@ -69,8 +70,8 @@ public class TblCommentServiceImpl implements TblCommentService {
 
     @Override
     public TblCommentResponse insert(Long postId, TblCommentCreateRequest request) {
-        PostResponse post = likeServiceImpl.getPostById(postId);
-        UserResponse user = likeServiceImpl.getUser();
+        PostResponse post = callApiExternalService.getPostById(postId);
+        UserResponse user = callApiExternalService.getUser();
         TblComment comment = Utilities.copyProperties(request, TblComment.class);
         comment.setPostId(post.getId());
         comment.setUserId(user.getId());
