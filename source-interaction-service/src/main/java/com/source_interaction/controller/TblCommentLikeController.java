@@ -64,6 +64,7 @@ public class TblCommentLikeController {
                                        @PathVariable Long commentId) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Delete {} {}", masterAccount, userId, commentId);
+        commentLikeService.delete(userId, commentId);
         return ResponseEntity.noContent().build();
     }
 }

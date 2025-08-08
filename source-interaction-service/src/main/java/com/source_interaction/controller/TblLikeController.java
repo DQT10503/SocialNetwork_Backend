@@ -62,6 +62,7 @@ public class TblLikeController {
     public ResponseEntity<Void> delete(@PathVariable("postId") Long postId) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Delete {}", masterAccount, postId);
+        likeService.delete(postId);
         return ResponseEntity.noContent().build();
     }
 
