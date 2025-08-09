@@ -11,6 +11,12 @@ keycloak:
   use-resource-role-mappings: true
   bearer-only: true
   public-client: true
+keycloak-properties:
+  client-id: eb0185a8-3ab4-4d86-ac4b-b9ab7cdd652e
+  client-secret: 6Xlo4Zzomf9laSsYzOVFktCEJ7C5aTDx
+  grant-type: password
+  username-admin: superadmin
+  password-admin: 12345
 
 spring:
   main:
