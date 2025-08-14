@@ -37,7 +37,7 @@ public class TblCommentController {
     public ResponseEntity<PagingResponse> search(TblCommentRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount, request);
-        Pageable pageable = PageRequest.of(pagingRequest.getLimit(), pagingRequest.getOffset(), Sort.by(Sort.Direction.DESC, "created_at"));
+        Pageable pageable = PageRequest.of(pagingRequest.getLimit(), pagingRequest.getOffset(), pagingRequest.getSort(Sort.by(Sort.Direction.DESC, "created_at")));
         return ResponseEntity.ok(commentService.search(request, pageable));
     }
 

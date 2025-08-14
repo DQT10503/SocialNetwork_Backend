@@ -38,7 +38,7 @@ public class TblCommentLikeController {
     public ResponseEntity<PagingResponse> search(TblCommentLikeRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount, request);
-        Pageable pageRequest = PageRequest.of(pagingRequest.getLimit(), pagingRequest.getOffset(), Sort.by(Sort.Direction.ASC, "user_id"));
+        Pageable pageRequest = PageRequest.of(pagingRequest.getLimit(), pagingRequest.getOffset(), pagingRequest.getSort(Sort.by(Sort.Direction.ASC, "user_id")));
         return ResponseEntity.ok(commentLikeService.search(request, pageRequest));
     }
 

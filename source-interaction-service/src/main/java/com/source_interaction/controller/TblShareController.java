@@ -35,7 +35,7 @@ public class TblShareController {
     public ResponseEntity<PagingResponse> search(TblShareRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount, request);
-        Pageable pageable = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), Sort.by(Sort.Direction.DESC, "created_at"));
+        Pageable pageable = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), pagingRequest.getSort(Sort.by(Sort.Direction.DESC, "created_at")));
         return ResponseEntity.ok(shareService.search(request, pageable));
     }
 

@@ -34,7 +34,7 @@ public class TblSavedPostController {
     public ResponseEntity<PagingResponse> search(TblSavedPostRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount, request);
-        Pageable pageable = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), Sort.by(Sort.Direction.DESC, "created_at"));
+        Pageable pageable = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), pagingRequest.getSort(Sort.by(Sort.Direction.DESC, "created_at")));
         return ResponseEntity.ok(savedPostService.search(request, pageable));
     }
 

@@ -36,7 +36,7 @@ public class TblLikeController {
     public ResponseEntity<PagingResponse> search(TblLikeRequest request, PagingRequest pagingRequest) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Filter {}", masterAccount,  request);
-        Pageable pageRequest = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), Sort.by(Sort.Direction.ASC, "created_at"));
+        Pageable pageRequest = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), pagingRequest.getSort(Sort.by(Sort.Direction.ASC, "created_at")));
         return ResponseEntity.ok(likeService.search(request, pageRequest));
     }
 
