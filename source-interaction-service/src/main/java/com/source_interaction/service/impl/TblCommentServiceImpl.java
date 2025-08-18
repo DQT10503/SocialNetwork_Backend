@@ -45,13 +45,13 @@ public class TblCommentServiceImpl implements TblCommentService {
         Map<String, Object> params = new HashMap<>();
         SimpleQueryBuilder simpleQueryBuilder = new SimpleQueryBuilder(" "
                 + " WITH RECURSIVE comment_hierarchy AS ("
-                + "     SELECT *, id as path"
+                + "     SELECT *, CAST (id AS TEXT) as path"
                 + "     FROM tbl_comment"
                 + "     WHERE parent_id IS NULL"
                 + " UNION ALL"
-                + "     SELECT c.*, ch.path || ' > ' || c.name AS path"
+                + "     SELECT c.*, ch.path || ' > ' || CAST (c.id AS TEXT) AS path"
                 + "     FROM tbl_comment c"
-                + "     JOIN comment_hierarchy ch ON c.parent_id = ch.parent_id"
+                + "     JOIN comment_hierarchy ch ON c.parent_id = ch.id"
                 + " )"
                 + " SELECT * FROM comment_hierarchy"
         );
