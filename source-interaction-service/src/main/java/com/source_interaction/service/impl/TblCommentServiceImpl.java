@@ -54,7 +54,6 @@ public class TblCommentServiceImpl implements TblCommentService {
                 + "     JOIN comment_hierarchy ch ON c.parent_id = ch.id"
                 + " )"
                 + " SELECT * FROM comment_hierarchy"
-                + " ORDER BY path"
         );
         whereClause.append(Utilities.buildWhereClause(request, params));
 
