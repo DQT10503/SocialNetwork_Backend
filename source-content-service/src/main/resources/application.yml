@@ -68,3 +68,8 @@ service:
     base-url: http://localhost:6789/api/user-service/
   relationship:
     base-url: http://localhost:6788/api/service-relationship/
+  interaction:
+    base-url: http://localhost:6000/api/interaction-service/
+schedule:
+  cron:
+    cache-score-edge-rank: "0 0 2 * * *"
