@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService {
         this.userApiService = userApiService;
     }
 
-
+    @SuppressWarnings("unchecked")
     @Override
     public PagingResponse search(TblPostRequest request, Pageable pageRequest) {
         StringBuilder whereClause = new StringBuilder("1 = 1");
@@ -89,6 +89,7 @@ public class PostServiceImpl implements PostService {
         return Utilities.copyProperties(post, TblPostResponse.class);
     }
 
+    @SuppressWarnings("unchecked")
     private UserResponse getUser() throws IOException {
         Call<PagingResponse> call = userApiService.getUser("Bearer " + BearerContextHolder.getContext().getToken(), BearerContextHolder.getContext().getMasterAccount());
         Response<PagingResponse> response = call.execute();

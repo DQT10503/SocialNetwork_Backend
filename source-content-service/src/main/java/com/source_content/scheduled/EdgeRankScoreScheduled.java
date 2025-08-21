@@ -1,4 +1,4 @@
-package com.source_content.schedule;
+package com.source_content.scheduled;
 
 import com.source_content.service.EdgeRankScoreService;
 import org.slf4j.Logger;
@@ -8,16 +8,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class EdgeRankScoreSchedule {
+public class EdgeRankScoreScheduled {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final EdgeRankScoreService edgeRankScoreService;
     private final StringRedisTemplate redisTemplate;
 
-    public EdgeRankScoreSchedule(EdgeRankScoreService edgeRankScoreService, StringRedisTemplate redisTemplate) {
+    public EdgeRankScoreScheduled(EdgeRankScoreService edgeRankScoreService, StringRedisTemplate redisTemplate) {
         this.edgeRankScoreService = edgeRankScoreService;
         this.redisTemplate = redisTemplate;
     }
@@ -27,7 +28,18 @@ public class EdgeRankScoreSchedule {
     public void cacheScoreEdgeRank() throws IOException {
         logger.info("[Schedule} Start calculate score for EdgeRank");
         Map<Long, Map<Long, Double>> scoreMap = edgeRankScoreService.calculateScore();
-        redisTemplate.opsForValue().set("user:edge-rank:point", scoreMap);
+        for (Map.Entry<Long, Map<Long, Double>> entry : scoreMap.entrySet()) {
+            Long key = entry.getKey();
+            Map<Long, Double> relatedEntities = entry.getValue();
+            String redisKey = "edge-rank:" + key;
+
+            // Chuyển Map<Long, Double> thành Map<String, String> để lưu vào Redis
+            Map<String, String> redisValue = new HashMap<>();
+            for (Map.Entry<Long, Double> related : relatedEntities.entrySet()) {
+                redisValue.put(related.getKey().toString(), related.getValue().toString());
+            }
+            redisTemplate.opsForHash().putAll(redisKey, redisValue);
+        }
         logger.info("[Schedule} Calculate score for EdgeRank successfully");
     }
 

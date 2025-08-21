@@ -5,6 +5,9 @@ import com.api.framework.domain.PagingResponse;
 import com.api.framework.security.BearerContextHolder;
 import com.api.framework.utils.Constants;
 import com.api.framework.utils.DateTimeUtils;
+import com.api.framework.utils.Utilities;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.source_content.domain.interaction_service.BaseInteractionRequest;
 import com.source_content.domain.interaction_service.comment.CommentRequest;
 import com.source_content.domain.interaction_service.comment.CommentResponse;
@@ -15,7 +18,7 @@ import com.source_content.domain.interaction_service.share.ShareResponse;
 import com.source_content.external.feign_client.InteractionFeignClient;
 import com.source_content.external.keycloak.KeycloakClient;
 import com.source_content.repository.TblPostRepository;
-import com.source_content.service.EdgeRankScoringService;
+import com.source_content.service.EdgeRankScoreService;
 import com.source_content.service.retrofit.RelationshipApiService;
 import com.source_content.service.retrofit.UserApiService;
 import com.source_content.utils.enummerate.ContentStatus;
@@ -34,23 +37,16 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
-public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
+public class EdgeRankScoreServiceImpl implements EdgeRankScoreService {
 
-    private final TblPostRepository postRepository;
-    private final RelationshipApiService relationshipApiService;
-    private final UserApiService userApiService;
-    private final StringRedisTemplate stringRedisTemplate;
     private final InteractionFeignClient interactionFeignClient;
     private final KeycloakClient keycloakClient;
 
-    public EdgeRankScoringServiceImpl(TblPostRepository postRepository, RelationshipApiService relationshipApiService, UserApiService userApiService, StringRedisTemplate stringRedisTemplate, InteractionFeignClient interactionFeignClient, KeycloakClient keycloakClient) {
-        this.postRepository = postRepository;
-        this.relationshipApiService = relationshipApiService;
-        this.userApiService = userApiService;
-        this.stringRedisTemplate = stringRedisTemplate;
+    public EdgeRankScoreServiceImpl(InteractionFeignClient interactionFeignClient, KeycloakClient keycloakClient) {
         this.interactionFeignClient = interactionFeignClient;
         this.keycloakClient = keycloakClient;
     }
@@ -129,7 +125,7 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
         Map<Long, Instant> mapAuthorWithCreatedAt = new HashMap<>();
         for (LikeResponse like : likeResponses) {
             mapAuthorWithCreatedAt.put(like.getAuthorId(), like.getCreatedAt());
-            if (mapUserIdWithAuthorIdAndValue.isEmpty()) {
+            if (mapUserIdWithAuthorIdAndValue.isEmpty() || !mapUserIdWithAuthorIdAndValue.containsKey(like.getUserId())) {
                 mapUserIdWithAuthorIdAndValue.put(like.getUserId(), mapAuthorWithCreatedAt);
                 continue;
             }
@@ -142,7 +138,7 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
         }
         for (CommentResponse cmt : commentResponses) {
             mapAuthorWithCreatedAt.put(cmt.getAuthorId(), cmt.getCreatedAt());
-            if (mapUserIdWithAuthorIdAndValue.isEmpty()) {
+            if (mapUserIdWithAuthorIdAndValue.isEmpty() || !mapUserIdWithAuthorIdAndValue.containsKey(cmt.getUserId())) {
                 mapUserIdWithAuthorIdAndValue.put(cmt.getUserId(), mapAuthorWithCreatedAt);
                 continue;
             }
@@ -155,7 +151,7 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
         }
         for (ShareResponse share : shareResponses) {
             mapAuthorWithCreatedAt.put(share.getAuthorId(), share.getCreatedAt());
-            if (mapUserIdWithAuthorIdAndValue.isEmpty()) {
+            if (mapUserIdWithAuthorIdAndValue.isEmpty() || !mapUserIdWithAuthorIdAndValue.containsKey(share.getUserId())) {
                 mapUserIdWithAuthorIdAndValue.put(share.getUserId(), mapAuthorWithCreatedAt);
                 continue;
             }
@@ -169,22 +165,22 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
 
         Map<Long, Map<Long, Double>> decayMap = new HashMap<>();
         Map<Long, Double> decayValue = new HashMap<>();
-        LocalDate today = LocalDate.from(DateTimeUtils.getCurrentTimeUTC().atZone(ZoneId.of("UTC")));
+        LocalDate today = LocalDate.from(DateTimeUtils.getCurrentTimeUTC().atZone(Constants.UTC_ZONE_ID));
         double lambda = 0.1;
-        mapAuthorWithCreatedAt.forEach((k, v) -> {
-            mapUserIdWithAuthorIdAndValue.forEach((key, value) -> {
-                int timePass = (int) ChronoUnit.DAYS.between(LocalDate.from(value.get(k)), today);
+        for (Map.Entry<Long, Map<Long, Instant>> outer : mapUserIdWithAuthorIdAndValue.entrySet()) {
+            for (Map.Entry<Long, Instant> inner : outer.getValue().entrySet()) {
+                int timePass = (int) ChronoUnit.DAYS.between(LocalDate.from(inner.getValue().atZone(Constants.UTC_ZONE_ID).toLocalDate()), today);
                 Double decay = Math.pow(Math.E, -lambda * timePass);
-                decayValue.put(k, decay);
-                decayMap.put(key, decayValue);
-            });
-        });
+                decayValue.put(inner.getKey(), decay);
+                decayMap.put(outer.getKey(), decayValue) ;
+            }
+        }
 
         return decayMap;
     }
 
     private InteractionData fetchDataInteractions() {
-        BaseInteractionRequest likeRequest = new LikeRequest(ContentStatus.ACTIVE);
+        BaseInteractionRequest likeRequest = new LikeRequest();
         BaseInteractionRequest commentRequest = new CommentRequest(ContentStatus.ACTIVE);
         BaseInteractionRequest shareRequest = new ShareRequest(ContentStatus.ACTIVE);
 
@@ -193,21 +189,6 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
         List<ShareResponse> shares = getPagedData(shareRequest, interactionFeignClient::getShares, ShareResponse.class);
 
         return new InteractionData(likes, comments, shares);
-    }
-
-    private Map<Long, Set<Object>> getFriendsByUserIds() {
-        Map<Long, Set<Object>> result = new HashMap<>();
-        Cursor<byte[]> cursor = Objects.requireNonNull(stringRedisTemplate.getConnectionFactory())
-                .getConnection()
-                .scan(ScanOptions.scanOptions().match("user:following:*").count(1000).build());
-
-        while (cursor.hasNext()) {
-            String key = new String(cursor.next());
-            Set<Object> friends = Collections.singleton(stringRedisTemplate.opsForSet().members(key));
-            Long userId = (new BigInteger(key.replace("user:following:", ""))).longValue();
-            result.put(userId, friends);
-        }
-        return result;
     }
 
     /**
@@ -219,16 +200,22 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
      * responseType: Class của kiểu dữ liệu trả về (ở đây khai báo nhưng code chưa dùng, có thể để mapping JSON về đúng kiểu K)
      */
     @SuppressWarnings("unchecked")
-    private <T, K> List<K> getPagedData(T request, BiFunction<T, PagingRequest, PagingResponse> apiCall, Class<K> responseType) {
+    private <T, K> List<K> getPagedData(T request, PagingApiCaller<T> apiCall, Class<K> responseType) {
         int offset = 0;
+        int limit = Constants.PAGE_SIZE_DEFAULT;
+        String sort = "user_id:asc";
         List<K> allData = new ArrayList<>();
-        PagingRequest pagingRequest = new PagingRequest();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
         while (true) {
-            pagingRequest.setOffset(offset * Constants.PAGE_SIZE_DEFAULT);
-            PagingResponse pagingRs = apiCall.apply(request, pagingRequest); // Gọi hàm apiCall đã truyền vào, thực chất là gọi API thật
+            int currentOffset = offset * limit;
+            PagingResponse pagingRs = apiCall.call(request, currentOffset, limit, sort); // Gọi hàm apiCall đã truyền vào, thực chất là gọi API thật
             List<?> rawData  = (List<?>) pagingRs.getData();                 // Lấy data từ response → cast về List<?> vì chưa rõ kiểu
-            List<K> typedData  = (List<K>) rawData;                          // Cast tiếp sang List<K> để dùng đúng kiểu generic mà người gọi đã chỉ định
+            List<K> typedData = rawData.stream()
+                    .map(o -> mapper.convertValue(o, responseType))
+                    .toList();
             if (typedData.isEmpty()) {
                 break;                                                       // Nếu page hiện tại rỗng → dừng
             }
@@ -266,6 +253,10 @@ public class EdgeRankScoringServiceImpl implements EdgeRankScoringService {
         }
     }
 
+    @FunctionalInterface
+    public interface PagingApiCaller<T> {
+        PagingResponse call(T request, int offset, int limit, String sort);
+    }
 
 }
 
