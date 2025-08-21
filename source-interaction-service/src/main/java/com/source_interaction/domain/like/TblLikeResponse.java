@@ -1,11 +1,19 @@
 package com.source_interaction.domain.like;
 
+import com.api.framework.utils.converter.DateTimeJsonDeserializer;
+import com.api.framework.utils.converter.DateTimeJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.source_interaction.entity.embedded.TblLikeId;
 import com.source_interaction.utils.enummerate.ReactionType;
+
+import java.time.Instant;
 
 public class TblLikeResponse {
     private TblLikeId id;
     private Long authorId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    private Instant createdAt;
     private ReactionType status;
 
     public TblLikeId getId() {
@@ -24,6 +32,14 @@ public class TblLikeResponse {
         this.authorId = authorId;
     }
 
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public ReactionType getStatus() {
         return status;
     }
@@ -32,8 +48,6 @@ public class TblLikeResponse {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "TblLikeResponse [id=" + id + ", authorId=" + authorId + ", status=" + status + "]";
-    }
+
+
 }

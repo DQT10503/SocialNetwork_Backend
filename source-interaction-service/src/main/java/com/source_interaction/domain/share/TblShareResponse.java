@@ -1,12 +1,20 @@
 package com.source_interaction.domain.share;
 
+import com.api.framework.utils.converter.DateTimeJsonDeserializer;
+import com.api.framework.utils.converter.DateTimeJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.source_interaction.utils.enummerate.InteractionStatus;
+
+import java.time.Instant;
 
 public class TblShareResponse {
     private Long id;
     private Long userId;
     private Long postId;
     private Long authorId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    private Instant createdAt;
     private InteractionStatus status;
 
     public Long getId() {
@@ -41,6 +49,14 @@ public class TblShareResponse {
         this.authorId = authorId;
     }
 
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public InteractionStatus getStatus() {
         return status;
     }
@@ -51,6 +67,6 @@ public class TblShareResponse {
 
     @Override
     public String toString() {
-        return "TblShareResponse [id=" + id + ", userId=" + userId + ", postId=" + postId + ", authorId=" + authorId + ", status=" + status + "]";
+        return "TblShareResponse [id=" + id + ", userId=" + userId + ", postId=" + postId + ", authorId=" + authorId + ", createdAt=" + createdAt + ", status=" + status + "]";
     }
 }

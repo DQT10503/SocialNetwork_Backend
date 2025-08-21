@@ -1,25 +1,44 @@
 package com.source_interaction.domain.like;
 
-import com.source_interaction.entity.embedded.TblLikeId;
 import com.source_interaction.utils.enummerate.ReactionType;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * DTO for {@link com.source_interaction.entity.TblLike}
- * ID {@link TblLikeId}
+ * ID {@link com.source_interaction.entity.embedded.TblLikeId}
  */
 public class TblLikeRequest {
-    @ApiModelProperty(value = "ID")
-    private TblLikeId id;
+    @ApiModelProperty(value = "ID người like")
+    private Long userId;
+    @ApiModelProperty(value = "ID bài đăng")
+    private Long postId;
+    @ApiModelProperty(value = "ID tác giả")
+    private Long authorId;
     @ApiModelProperty(value = "Trạng thái")
     private ReactionType status;
 
-    public TblLikeId getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(TblLikeId id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 
     public ReactionType getStatus() {
@@ -32,6 +51,6 @@ public class TblLikeRequest {
 
     @Override
     public String toString() {
-        return "TblLikeRequest [id=" + id + ", status=" + status + "]";
+        return "TblLikeRequest [userId=" + userId + ", postId=" + postId + ", authorId=" + authorId + ", status=" + status + "]";
     }
 }

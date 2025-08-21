@@ -13,6 +13,9 @@ public class TblShareRequest {
     @ApiModelProperty(value = "ID post")
     private Long postId;
 
+    @ApiModelProperty(value = "ID tác giả")
+    private Long authorId;
+
     @ApiModelProperty(value = "Trạng thái")
     private InteractionStatus status;
 
@@ -40,6 +43,14 @@ public class TblShareRequest {
         this.postId = postId;
     }
 
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
     public InteractionStatus getStatus() {
         return status;
     }
@@ -50,6 +61,6 @@ public class TblShareRequest {
 
     @Override
     public String toString() {
-        return "TblShareRequest [id=" + id + ", userId=" + userId + ", postId=" + postId + ", status=" + status + "]";
+        return "TblShareRequest [id=" + id + ", userId=" + userId + ", postId=" + postId + ", authorId=" + authorId + ", status=" + status + "]";
     }
 }

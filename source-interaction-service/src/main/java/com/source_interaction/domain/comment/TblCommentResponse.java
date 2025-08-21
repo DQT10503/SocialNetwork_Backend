@@ -1,6 +1,10 @@
 package com.source_interaction.domain.comment;
 
+import com.api.framework.utils.converter.DateTimeJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.source_interaction.utils.enummerate.InteractionStatus;
+
+import java.time.Instant;
 
 public class TblCommentResponse {
     private Long userId;
@@ -8,6 +12,8 @@ public class TblCommentResponse {
     private String content;
     private Long parentId;
     private Long authorId;
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    private Instant createdAt;
     private InteractionStatus status;
 
     public Long getUserId() {
@@ -50,6 +56,14 @@ public class TblCommentResponse {
         this.authorId = authorId;
     }
 
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public InteractionStatus getStatus() {
         return status;
     }
@@ -60,6 +74,6 @@ public class TblCommentResponse {
 
     @Override
     public String toString() {
-        return "TblCommentResponse [userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", authorId=" + authorId + ", status=" + status + "]";
+        return "TblCommentResponse [userId=" + userId + ", postId=" + postId + ", content=" + content + ", parentId=" + parentId + ", authorId=" + authorId + ", createdAt=" + createdAt + ", status=" + status + "]";
     }
 }
