@@ -6,6 +6,7 @@ import com.source_content.domain.post.TblPostCreateRequest;
 import com.source_content.domain.post.TblPostRequest;
 import com.source_content.domain.post.TblPostResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,5 +15,5 @@ public interface PostService {
 
     PagingResponse search(TblPostRequest request, Pageable pageRequest);
 
-    TblPostResponse insert(TblPostCreateRequest postRequest, List<TblMediaCreateRequest> mediaRequest) throws IOException;
+    TblPostResponse insert(TblPostCreateRequest postRequest, MultipartFile[] files) throws IOException;
 }
