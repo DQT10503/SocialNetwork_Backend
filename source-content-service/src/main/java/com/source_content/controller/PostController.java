@@ -3,9 +3,9 @@ package com.source_content.controller;
 import com.api.framework.domain.PagingRequest;
 import com.api.framework.domain.PagingResponse;
 import com.api.framework.security.BearerContextHolder;
+import com.source_content.domain.post.TblPostCreateRequest;
 import com.source_content.domain.post.TblPostRequest;
 import com.source_content.domain.post.TblPostResponse;
-import com.source_content.domain.wrapper.PostWrapperCreateRequest;
 import com.source_content.service.PostService;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -38,11 +40,12 @@ public class PostController {
         return ResponseEntity.ok(postService.search(request, pageable));
     }
 
-    @PostMapping
-    public ResponseEntity<TblPostResponse> create(@Valid @RequestBody PostWrapperCreateRequest postWrapperRequest) throws IOException {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<TblPostResponse> create(@Valid @RequestPart("postRequest") TblPostCreateRequest postRequest,
+                                                  @RequestPart(value = "files", required = false) MultipartFile[] files) throws IOException {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
-        logger.info("{} Create post {} {}", masterAccount, postWrapperRequest, null);
-        return ResponseEntity.ok(postService.insert(postWrapperRequest.getPostRequest(), postWrapperRequest.getMediaRequest()));
+        logger.info("{} Create post {}", masterAccount, postRequest);
+        return ResponseEntity.ok(postService.insert(postRequest, files));
     }
 
 }

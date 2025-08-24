@@ -6,9 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 
 public class TblPostCreateRequest {
-    @ApiModelProperty(value = "User ID")
-    @NotNull
-    private Long userId;
     @ApiModelProperty(value = "Nội dung")
     @NotNull
     private String content;
@@ -20,19 +17,10 @@ public class TblPostCreateRequest {
 
     public TblPostCreateRequest() {}
 
-    public TblPostCreateRequest(Long userId, String content, PrivacyLevel privacyLevel, String location) {
-        this.userId = userId;
+    public TblPostCreateRequest(String content, PrivacyLevel privacyLevel, String location) {
         this.content = content;
         this.privacyLevel = privacyLevel;
         this.location = location;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getContent() {
@@ -61,6 +49,6 @@ public class TblPostCreateRequest {
 
     @Override
     public String toString() {
-        return "TblPostCreateRequest [userId=" + userId + ", content=" + content + ", privacyLevel=" + privacyLevel + ", location=" + location + "]";
+        return "TblPostCreateRequest [content=" + content + ", privacyLevel=" + privacyLevel + ", location=" + location + "]";
     }
 }

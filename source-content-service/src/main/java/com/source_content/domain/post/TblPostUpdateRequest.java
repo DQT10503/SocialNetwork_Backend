@@ -30,16 +30,6 @@ public class TblPostUpdateRequest extends TblPostCreateRequest {
     }
 
     @Override
-    public Long getUserId() {
-        return super.getUserId();
-    }
-
-    @Override
-    public void setUserId(Long userId) {
-        super.setUserId(userId);
-    }
-
-    @Override
     public String getContent() {
         return super.getContent();
     }
