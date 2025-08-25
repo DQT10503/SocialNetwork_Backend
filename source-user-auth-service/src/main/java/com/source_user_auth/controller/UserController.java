@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "Cập nhật user")
-    @GetMapping
+    @PostMapping
     public ResponseEntity<TblUserResponse> update(TblUserUpdateRequest request) {
         String masterAccount = BearerContextHolder.getContext().getMasterAccount();
         logger.info("{} Search {}", masterAccount, request);
