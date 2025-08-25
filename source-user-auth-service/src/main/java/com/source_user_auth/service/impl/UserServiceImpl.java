@@ -1,12 +1,17 @@
 package com.source_user_auth.service.impl;
 
+import com.api.framework.domain.DeleteMethodResponse;
 import com.api.framework.domain.PagingResponse;
+import com.api.framework.exception.BusinessException;
 import com.api.framework.service.CommonService;
+import com.api.framework.utils.Constants;
 import com.api.framework.utils.MessageUtil;
 import com.api.framework.utils.SimpleQueryBuilder;
 import com.api.framework.utils.Utilities;
+import com.source_user_auth.domain.user.TblUserDetailResponse;
 import com.source_user_auth.domain.user.TblUserRequest;
 import com.source_user_auth.domain.user.TblUserResponse;
+import com.source_user_auth.domain.user.TblUserUpdateRequest;
 import com.source_user_auth.entity.TblUser;
 import com.source_user_auth.entity.repository.TblUserRepository;
 import com.source_user_auth.service.UserService;
@@ -47,5 +52,32 @@ public class UserServiceImpl implements UserService {
         pagingRs.setData(caseResponses);
         pagingRs.setTotalRecords(caseResponses.size());
         return pagingRs;
+    }
+
+    @Override
+    public TblUserResponse update(TblUserUpdateRequest request) {
+        TblUser user = getUserById(request.getId());
+        Utilities.updateProperties(request, user);
+        userRepository.save(user);
+        return Utilities.copyProperties(user, TblUserResponse.class);
+    }
+
+    @Override
+    public DeleteMethodResponse delete(Long id) {
+        TblUser user = getUserById(id);
+        userRepository.deleteById(id);
+        DeleteMethodResponse response = new DeleteMethodResponse();
+        response.setId(id);
+        return response;
+    }
+
+    @Override
+    public TblUserDetailResponse detail(Long id) {
+        TblUser user = getUserById(id);
+        return Utilities.copyProperties(user, TblUserDetailResponse.class);
+    }
+
+    private TblUser getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new BusinessException(Constants.ERR_404, messageUtil.getMessage(Constants.ERR_404), "ID: " + id));
     }
 }

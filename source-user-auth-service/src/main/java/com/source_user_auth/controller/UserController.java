@@ -1,9 +1,13 @@
 package com.source_user_auth.controller;
 
+import com.api.framework.domain.DeleteMethodResponse;
 import com.api.framework.domain.PagingRequest;
 import com.api.framework.domain.PagingResponse;
 import com.api.framework.security.BearerContextHolder;
+import com.source_user_auth.domain.user.TblUserDetailResponse;
 import com.source_user_auth.domain.user.TblUserRequest;
+import com.source_user_auth.domain.user.TblUserResponse;
+import com.source_user_auth.domain.user.TblUserUpdateRequest;
 import com.source_user_auth.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,5 +37,29 @@ public class UserController {
         logger.info("{} Search {}", masterAccount, request);
         Pageable pageable = PageRequest.of(pagingRequest.getOffset(), pagingRequest.getLimit(), pagingRequest.getSort(Sort.by(Sort.Direction.ASC, "username")));
         return ResponseEntity.ok(userService.search(request, pageable));
+    }
+
+    @ApiOperation(value = "Cập nhật user")
+    @GetMapping
+    public ResponseEntity<TblUserResponse> update(TblUserUpdateRequest request) {
+        String masterAccount = BearerContextHolder.getContext().getMasterAccount();
+        logger.info("{} Search {}", masterAccount, request);
+        return ResponseEntity.ok(userService.update(request));
+    }
+
+    @ApiOperation(value = "Xóa user")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DeleteMethodResponse> delete(@PathVariable("id") Long id) {
+        String masterAccount = BearerContextHolder.getContext().getMasterAccount();
+        logger.info("{} Detail {}", masterAccount, id);
+        return ResponseEntity.ok(userService.delete(id));
+    }
+
+    @ApiOperation(value = "Chi tiết user")
+    @GetMapping("/{id}")
+    public ResponseEntity<TblUserDetailResponse> detail(@PathVariable("id") Long id) {
+        String masterAccount = BearerContextHolder.getContext().getMasterAccount();
+        logger.info("{} Detail {}", masterAccount, id);
+        return ResponseEntity.ok(userService.detail(id));
     }
 }
