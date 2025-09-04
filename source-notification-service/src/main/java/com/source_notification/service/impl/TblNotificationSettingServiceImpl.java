@@ -35,6 +35,7 @@ public class TblNotificationSettingServiceImpl implements TblNotificationSetting
         this.messageUtil = messageUtil;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public PagingResponse search(TblNotificationSettingRequest request, Pageable pageRequest) {
         StringBuilder whereClause = new StringBuilder("1 = 1");

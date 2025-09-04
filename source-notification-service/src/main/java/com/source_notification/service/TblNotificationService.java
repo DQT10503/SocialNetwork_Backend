@@ -1,7 +1,7 @@
 package com.source_notification.service;
 
-import com.source_notification.domain.event.ReactionEventDTO;
+import com.source_notification.domain.event.ReactionEvent;
 
 public interface TblNotificationService {
-    void handleReaction(ReactionEventDTO event);
+    void handleReaction(ReactionEvent event);
 }

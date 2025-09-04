@@ -3,6 +3,7 @@ package com.source_notification.entity;
 import com.api.framework.security.BearerContextHolder;
 import com.api.framework.utils.DateTimeUtils;
 import com.utils.enummerate.NotificationStatus;
+import com.utils.enummerate.ReactionTargetType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ public class TblNotification implements Serializable {
     private Long userId;
 
     @Column(name = "type")
-    private String type;
+    private ReactionTargetType type;
 
     @Column(name = "data")
     private String data;
@@ -35,14 +36,50 @@ public class TblNotification implements Serializable {
     @Column(name = "created_by")
     private String createdBy;
 
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private NotificationStatus status;
 
+    public TblNotification() {
+    }
+
+    public TblNotification(Long id, Long userId, ReactionTargetType type, String data, Boolean isRead, Instant createdAt, String createdBy, Instant updatedAt, String updatedBy, NotificationStatus status) {
+        this.id = id;
+        this.userId = userId;
+        this.type = type;
+        this.data = data;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.updatedAt = updatedAt;
+        this.updatedBy = updatedBy;
+        this.status = status;
+    }
+
+    public TblNotification(Long userId, ReactionTargetType type, String data, NotificationStatus status) {
+        this.userId = userId;
+        this.type = type;
+        this.data = data;
+        this.status = status;
+    }
+
     @PrePersist
     public void preInsert() {
+        this.isRead = false;
         this.createdAt = DateTimeUtils.getCurrentTimeUTC();
         this.createdBy = BearerContextHolder.getContext().getMasterAccount();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = DateTimeUtils.getCurrentTimeUTC();
+        this.updatedBy = BearerContextHolder.getContext().getMasterAccount();
     }
 
     public Long getId() {
@@ -61,11 +98,11 @@ public class TblNotification implements Serializable {
         this.userId = userId;
     }
 
-    public String getType() {
+    public ReactionTargetType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ReactionTargetType type) {
         this.type = type;
     }
 
@@ -109,6 +146,22 @@ public class TblNotification implements Serializable {
         isRead = read;
     }
 
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
     public NotificationStatus getStatus() {
         return status;
     }
@@ -119,6 +172,6 @@ public class TblNotification implements Serializable {
 
     @Override
     public String toString() {
-        return "TblNotification [id=" + id + ", userId=" + userId + ", type=" + type + ", data=" + data + ", isRead=" + isRead + ", createdAt=" + createdAt + ", createdBy=" + createdBy + ", status=" + status + "]";
+        return "TblNotification [id=" + id + ", userId=" + userId + ", type=" + type + ", data=" + data + ", isRead=" + isRead + ", createdAt=" + createdAt + ", createdBy=" + createdBy + ", updatedAt=" + updatedAt + ", updatedBy=" + updatedBy + ", status=" + status + "]";
     }
 }

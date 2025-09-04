@@ -3,9 +3,11 @@ package com.source_content.controller;
 import com.api.framework.domain.PagingRequest;
 import com.api.framework.domain.PagingResponse;
 import com.api.framework.security.BearerContextHolder;
+import com.source_content.domain.media.CloudinaryUploadResponse;
 import com.source_content.domain.post.TblPostCreateRequest;
 import com.source_content.domain.post.TblPostRequest;
 import com.source_content.domain.post.TblPostResponse;
+import com.source_content.service.CloudinaryService;
 import com.source_content.service.PostService;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @Api(description = "Module Post")
 @RestController
@@ -27,9 +30,11 @@ import java.io.IOException;
 public class PostController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final PostService postService;
+    private final CloudinaryService cloudinaryService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, CloudinaryService cloudinaryService) {
         this.postService = postService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @GetMapping
@@ -48,4 +53,10 @@ public class PostController {
         return ResponseEntity.ok(postService.insert(postRequest, files));
     }
 
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<CloudinaryUploadResponse>> upload(@RequestPart(value = "files") MultipartFile[] files) throws IOException {
+        String masterAccount = BearerContextHolder.getContext().getMasterAccount();
+        logger.info("{} Create post {}", masterAccount, files);
+        return ResponseEntity.ok(cloudinaryService.upload(files));
+    }
 }
